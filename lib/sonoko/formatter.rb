@@ -6,7 +6,6 @@ module Sonoko
     def initialize(iostream)
       @tracer = Sonoko::Config.tracer
       @iostream = iostream
-      tracer.install
     end
 
     def example_started(event)
