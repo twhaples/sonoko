@@ -30,7 +30,7 @@ module Sonoko
         self,
         :example_started,
         :example_passed,
-        :example_failed,
+        :example_failed
       )
     end
   end

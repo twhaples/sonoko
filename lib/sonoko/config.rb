@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require "sonoko/tracer"
+
+require 'sonoko/tracer'
 
 module Sonoko
   module Config
