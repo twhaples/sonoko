@@ -10,13 +10,16 @@ module Sonoko
 
     def example_started(_event)
       tracer.reset
+      tracer.install
     end
 
     def example_passed(event)
+      tracer.uninstall
       finish(event)
     end
 
     def example_failed(event)
+      tracer.uninstall
       finish(event)
     end
 

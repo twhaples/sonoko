@@ -29,6 +29,10 @@ module Sonoko
         set_trace_func(trace)
       end
 
+      def uninstall
+        set_trace_func(nil)
+      end
+
       private
 
       attr_accessor :current_events
