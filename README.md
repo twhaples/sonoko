@@ -1,36 +1,29 @@
 # Sonoko
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/sonoko`. To experiment with that code, run `bin/console` for an interactive prompt.
+Runs all the tests related to your diff.
 
-TODO: Delete this and the text above, and describe your gem
+![amusing .gif](https://media.giphy.com/media/3ohryhYAObzCVnZQAg/giphy.gif)
 
-## Installation
+## Architecture
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'sonoko'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install sonoko
+Sonoko needs to understand your tests first, so it runs the test suite
+with a trace function installed to generate a method-to-test
+mapping. Then when you modify your code, it notes the affected method,
+and invokes the appropriate examples.
 
 ## Usage
 
-TODO: Write usage instructions here
+The `sonoko-trace` executable assumes it is installed in `bin/` in the
+root of the project that needs to be traced. Add `sonoko` to your
+Gemfile and run
 
-## Development
+``` shellsession
+bundle binstub sonoko
+bin/sonoko-trace spec/ # or equivalent rspec arugments
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+This will output a JSON mapping: class and method name to
 
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/sonoko.
-
+At some point it will output SQLite instead. Or maybe a real database.
+It'll be fun!
