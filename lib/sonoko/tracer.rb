@@ -16,12 +16,12 @@ module Sonoko
       def install
         repo_root = Config.repo_root
         base_regex = /^#{repo_root}/
-        rspec_regex = /^RSpec::/
+        ignore_regex = /^(?:RSpec::|#<)/
 
         trace = proc do |event, file, _line, id, _binding, classname|
           if event == 'call' &&
              file =~ base_regex &&
-             classname.to_s !~ rspec_regex
+             classname.to_s !~ ignore_regex
             current_events << [classname, id]
           end
         end
