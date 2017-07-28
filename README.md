@@ -3,7 +3,7 @@
 Runs all the tests related to your diff.
 
 
-![amusing image](http://i.imgur.com/MR3hYYK.jpg)
+![Let's Enjoy Kagawa Life!](http://i.imgur.com/MR3hYYK.jpg)
 
 ## Architecture
 
@@ -17,7 +17,7 @@ put a copy where your computer can access it in the morning.
 
 (You definitely should not check it into version control.)
 
-## Usage
+## Setup
 
 The `sonoko-trace` executable assumes it is installed in `bin/` in the
 root of the project that needs to be traced. Add `sonoko` to your
@@ -25,15 +25,34 @@ Gemfile and run
 
 ``` shellsession
 bundle binstub sonoko
-bin/sonoko analyze spec/ # or equivalent rspec arugments
+
+```
+This will set up `bin/sonoko` for your project.
+
+
+## Analysis
+```  shellsession
+bin/sonoko reset
+bin/sonoko analyze
 ```
 
-This creates a SQLite3 database `tests.db` in your project root.
+`analyze` creates a database (by default, `tests.db` in your project
+root) if it does not exist, runs specs (defaulting to `spec/`) and
+populates it. If you have multiple testrunner invocations in your
+project, you can make multiple calls to `analyze` and they will
+add records incrementally.
 
-`bin/sonoko dump` will dump the contents of this database, because you
-like debugging I guess?
+`reset` erases any existing database.
 
-A future command will take method names and invoke those examples with rspec.
+## Use
+
+`bin/sonoko relevant` will read a list of method names on `STDIN` and
+output relevant spec locations.
+
+A future command will determine relevant method names.
+
+A future command will take method names and invoke the relevant
+examples with rspec.
 
 ----
 

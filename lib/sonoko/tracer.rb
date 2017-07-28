@@ -51,45 +51,18 @@ module Sonoko
     end
 
     class Sqlite < Base
-      attr_reader :db
-
       def initialize
         super
         @db_path = File.join(Sonoko::Config.repo_root, 'tests.db')
       end
 
       def db
-        @db ||= SQLite3::Database.new(@db_path)
-      end
-
-      def new_db!
-        @db = nil
-        File.unlink @db_path if File.exist?(@db_path)
-        db.execute <<-SQL
-          create table tests (
-            classname varchar,
-            method varchar,
-            location varchar
-          );
-        SQL
-        db.execute <<-SQL
-          create index test_lookup on tests (classname, method);
-          create unique_index no_dupes on tests (classname, method, location);
-        SQL
+        Sonoko::Config.db
       end
 
       def record(location)
         current_events.each do |classname, method|
-          begin
-            db.execute(
-              'insert into tests (classname, method, location) values (?, ?, ?);',
-              [classname.to_s, method.to_s, location]
-            )
-          rescue => e
-            # this happens in rspec-land so it's obnoxiously silent
-            STDERR.puts e.inspect
-            raise e
-          end
+          db.insert(classname.to_s, method.to_s, location)
         end
       end
     end

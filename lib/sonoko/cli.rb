@@ -1,9 +1,11 @@
 # frozen_string_literal: true
+
 require 'thor'
 
 module Sonoko
   class CLI < Thor
     desc 'analyze', 'Analyzes tests and builds a database'
+    option :examples, type: :string, default: 'spec/'
     def analyze(*argv_args)
       require 'bundler/setup'
       require 'rspec'
@@ -11,11 +13,17 @@ module Sonoko
       require 'sonoko'
 
       Sonoko::Formatter.register
-      Sonoko::Config.tracer.new_db!
+      Sonoko::Config.setup
 
-      args = ['-f', 'Sonoko::Formatter', *argv_args]
+      default_args = ['-f', 'Sonoko::Formatter']
+      args = [*default_args, options[:examples], *argv_args]
 
       RSpec::Core::Runner.run(args)
+    end
+
+    desc 'reset', 'Reset the database'
+    def reset
+      Sonoko::Config.db.destroy!
     end
 
     desc 'dump', 'Ugly dump of all the rows'
@@ -23,14 +31,16 @@ module Sonoko
       require 'sonoko'
       require 'json'
 
-      Sonoko::Config.tracer.db.query("select * from tests") do |rows|
+      Sonoko::Config.setup
+      Sonoko::Config.db.handle.query('select * from tests') do |rows|
         rows.each do |row|
           puts JSON[row]
         end
       end
     end
 
-    desc 'relevant', 'Identifies the tests relevant to a list of classes / methods'
+    desc 'relevant',
+         'Identifies the tests relevant to a list of classes / methods'
     def relevant
       require 'sonoko'
       require 'sonoko/relevant'
