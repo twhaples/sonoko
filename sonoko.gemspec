@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Thomas Whaples"]
   spec.email         = ["twhaples@gocardless.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Runs tests relevant to your test suite}
+  spec.description   = %q{Has a test harness that traces your test suite and a diff analyzer that runs tests affected by your outstanding changes.}
+  spec.homepage      = "https://github.com/gocardless/sonoko"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
