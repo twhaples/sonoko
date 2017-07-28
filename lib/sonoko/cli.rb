@@ -29,5 +29,23 @@ module Sonoko
         end
       end
     end
+
+    desc 'relevant', 'Identifies the tests relevant to a list of classes / methods'
+    def relevant
+      require 'sonoko'
+      require 'sonoko/relevant'
+      changed = []
+      STDIN.each_line do |line|
+        match = line.match(/^(\S+)(?:\s+|#|\.)(\S+)$/)
+        raise ArgumentError, "Could not understand #{line}" unless match
+        classname = match[1]
+        method = match[2]
+        changed << [classname, method]
+      end
+
+      Sonoko::Relevant.compute(changed).each do |location|
+        puts location
+      end
+    end
   end
 end
