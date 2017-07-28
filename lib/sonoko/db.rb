@@ -16,14 +16,16 @@ module Sonoko
     end
 
     def ensure_created!
-      handle.execute <<-SQL
+      return if File.exist?(@path)
+      create_handle = SQLite3::Database.new(@path)
+      create_handle.execute <<-SQL
           create table tests (
             classname varchar,
             method varchar,
             location varchar
           );
         SQL
-      handle.execute <<-SQL
+      create_handle.execute <<-SQL
           create index test_lookup on tests (classname, method);
           create unique_index no_dupes on tests (classname, method, location);
         SQL

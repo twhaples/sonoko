@@ -55,11 +55,6 @@ module Sonoko
     end
 
     class Sqlite < Base
-      def initialize
-        super
-        @db_path = File.join(Sonoko::Config.repo_root, 'tests.db')
-      end
-
       def db
         Sonoko::Config.db
       end

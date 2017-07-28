@@ -3,8 +3,9 @@
 module Sonoko
   class Formatter
     attr_reader :tracer
-    def initialize(_iostream)
+    def initialize(iostream)
       @tracer = Sonoko::Config.tracer
+      @iostream = iostream
       tracer.install
     end
 
@@ -25,6 +26,7 @@ module Sonoko
 
     def finish(event)
       location = event.example.location
+      @iostream.puts location if Sonoko::Config.verbose
       tracer.record(location)
     end
 

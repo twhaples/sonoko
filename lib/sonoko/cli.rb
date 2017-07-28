@@ -1,10 +1,24 @@
 # frozen_string_literal: true
 
 require 'thor'
+require 'sonoko/config'
 
 module Sonoko
   class CLI < Thor
-    desc 'analyze', 'Analyzes tests and builds a database'
+    class_option :repo,
+                 type: :string,
+                 default: Sonoko::Config.default_repo_root,
+                 desc: 'Location of the git repository to analyze'
+    class_option :db_path,
+                 type: :string,
+                 default: "#{Sonoko::Config.default_repo_root}/tests.db",
+                 desc: 'Location to place SQLite test database'
+    class_option :verbose,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Print more messages'
+
+    desc 'analyze [rspec-options]', 'Analyzes tests and builds a database'
     option :examples, type: :string, default: 'spec/'
     def analyze(*argv_args)
       require 'bundler/setup'
@@ -12,11 +26,13 @@ module Sonoko
       require 'rspec/core/runner'
       require 'sonoko'
 
+      setup_db!
       Sonoko::Formatter.register
-      Sonoko::Config.setup
+
+      argv_args = ['spec/'] if argv_args.empty?
 
       default_args = ['-f', 'Sonoko::Formatter']
-      args = [*default_args, options[:examples], *argv_args]
+      args = [*default_args, *argv_args]
 
       RSpec::Core::Runner.run(args)
     end
@@ -31,7 +47,8 @@ module Sonoko
       require 'sonoko'
       require 'json'
 
-      Sonoko::Config.setup
+      setup_db!
+
       Sonoko::Config.db.handle.query('select * from tests') do |rows|
         rows.each do |row|
           puts JSON[row]
@@ -55,6 +72,17 @@ module Sonoko
 
       Sonoko::Relevant.compute(changed).each do |location|
         puts location
+      end
+    end
+
+    no_tasks do
+      def setup_db!
+        Sonoko::Config.setup(
+          db_path: options[:db_path],
+          repo_root: options[:repo],
+          verbose: options[:verbose]
+        )
+        Sonoko::Config.db.ensure_created!
       end
     end
   end
