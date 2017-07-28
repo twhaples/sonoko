@@ -4,7 +4,7 @@ module Sonoko
   class Formatter
     attr_reader :tracer
     def initialize(_iostream)
-      @tracer = Tracer.instance
+      @tracer = Sonoko::Config.tracer
       tracer.install
     end
 

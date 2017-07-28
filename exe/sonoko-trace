@@ -21,4 +21,4 @@ Sonoko::Config.repo_root = Pathname.new(
 args = ['-f', 'Sonoko::Formatter', *ARGV]
 RSpec::Core::Runner.run(args)
 
-puts JSON.pretty_generate(Sonoko::Tracer.instance.event_examples)
+puts JSON.pretty_generate(Sonoko::Config.tracer.event_examples)
