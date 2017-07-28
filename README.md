@@ -19,11 +19,7 @@ put a copy where your computer can access it in the morning.
 
 ## Setup
 
-The `sonoko-trace` executable assumes it is installed in `bin/` in the
-root of the project that needs to be traced. Add `sonoko` to your
-Gemfile and run
-
-Optionally, invoke:
+Add `sonoko` to your Gemfile or gemspec. Optionally, invoke:
 
 ``` shellsession
 bundle binstub sonoko
@@ -52,11 +48,54 @@ add records incrementally.
 `bin/sonoko relevant` will read a list of method names on `STDIN` and
 output relevant spec locations.
 
-A future command will determine relevant method names.
+A future command will determine relevant method names by
+ - looking at the git repository before and after
+ - parsing the AST
+ - looking for changes in the AST
+ - walking down the diff to find methods removed by the change
+ - walking back up the AST to find affected methods around this change
 
 A future command will take method names and invoke the relevant
-examples with rspec.
+examples with rspec. It will also run any *modified* tests.
 
-----
+## Performance
 
+Let's try this just on one spec:
+
+```
+inubozaki-fuu:payments-service$ time bin/rspec 'spec/models/registration_spec.rb'
+
+real	1m6.085s
+user	0m54.725s
+sys     0m5.719s
+```
+
+
+```
+inubozaki-fuu:payments-service$ time bin/sonoko analyze --vebose 'spec/models/registration_spec.rb'
+
+real	8m16.908s
+user	6m50.064s
+sys     0m41.314s
+```
+
+It takes about 6 times longer; you're probably going to want to run
+that overnight. You can run this on CircleCI and get parallelism; run
+it in verbose mode (to reassure Circle) and possibly bump up the idle
+timeout.
+
+```
+test:
+  override:
+    - bin/sonoko analyze --verbose:
+        parallel: true
+        files:
+          - spec/**/*_spec.rb
+general:
+  artifacts:
+    - tests.db
+```
+Merging databases will be required.
+
+## Amusement
 ![amusing .gif](https://media.giphy.com/media/3ohryhYAObzCVnZQAg/giphy.gif)
