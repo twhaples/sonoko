@@ -7,11 +7,11 @@ module Sonoko
   class CLI < Thor
     class_option :repo,
                  type: :string,
-                 default: Sonoko::Config.default_repo_root,
+                 default: '.',
                  desc: 'Location of the git repository to analyze'
     class_option :db_path,
                  type: :string,
-                 default: "#{Sonoko::Config.default_repo_root}/tests.db",
+                 default: 'tests.db',
                  desc: 'Location to place SQLite test database'
     class_option :verbose,
                  type: :boolean,
@@ -30,7 +30,6 @@ module Sonoko
       Sonoko::Formatter.register
 
       argv_args = ['spec/'] if argv_args.empty?
-
       default_args = ['-f', 'Sonoko::Formatter']
       args = [*default_args, *argv_args]
 

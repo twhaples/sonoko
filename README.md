@@ -23,17 +23,20 @@ The `sonoko-trace` executable assumes it is installed in `bin/` in the
 root of the project that needs to be traced. Add `sonoko` to your
 Gemfile and run
 
+Optionally, invoke:
+
 ``` shellsession
 bundle binstub sonoko
 
 ```
-This will set up `bin/sonoko` for your project.
 
+This will set up `bin/sonoko` for your project.
+(You can commit this binstub or ignore it, at your discretion.)
 
 ## Analysis
 ```  shellsession
-bin/sonoko reset
-bin/sonoko analyze
+sonoko reset
+sonoko analyze
 ```
 
 `analyze` creates a database (by default, `tests.db` in your project
