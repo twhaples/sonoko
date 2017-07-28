@@ -2,7 +2,8 @@
 
 Runs all the tests related to your diff.
 
-![amusing .gif](https://media.giphy.com/media/3ohryhYAObzCVnZQAg/giphy.gif)
+
+![amusing image](http://i.imgur.com/MR3hYYK.jpg)
 
 ## Architecture
 
@@ -10,6 +11,11 @@ Sonoko needs to understand your tests first, so it runs the test suite
 with a trace function installed to generate a method-to-test
 mapping. Then when you modify your code, it notes the affected method,
 and invokes the appropriate examples.
+
+You should probably analyze the database nightly (or thereabouts) and
+put a copy where your computer can access it in the morning.
+
+(You definitely should not check it into version control.)
 
 ## Usage
 
@@ -19,12 +25,16 @@ Gemfile and run
 
 ``` shellsession
 bundle binstub sonoko
-bin/sonoko-trace spec/ # or equivalent rspec arugments
+bin/sonoko analyze spec/ # or equivalent rspec arugments
 ```
 
-This creates `tests.db` in your project root.
+This creates a SQLite3 database `tests.db` in your project root.
 
-`bin/sonoko-dump` will dump the contents of the database, because you
-like debugging.
+`bin/sonoko dump` will dump the contents of this database, because you
+like debugging I guess?
 
 A future command will take method names and invoke those examples with rspec.
+
+----
+
+![amusing .gif](https://media.giphy.com/media/3ohryhYAObzCVnZQAg/giphy.gif)
