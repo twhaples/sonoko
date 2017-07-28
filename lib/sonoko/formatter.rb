@@ -9,7 +9,9 @@ module Sonoko
       tracer.install
     end
 
-    def example_started(_event)
+    def example_started(event)
+      @iostream.puts event.example.location if Sonoko::Config.verbose
+
       tracer.reset
       tracer.install
     end
@@ -26,7 +28,6 @@ module Sonoko
 
     def finish(event)
       location = event.example.location
-      @iostream.puts location if Sonoko::Config.verbose
       tracer.record(location)
     end
 
