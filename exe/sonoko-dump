@@ -1,7 +1,0 @@
-require 'sonoko'
-
-Sonoko::Config.tracer.db.query("select * from tests") do |rows|
-  rows.each do |row|
-    puts row.inspect
-  end
-end

@@ -7,7 +7,7 @@ describe Sonoko do
     expect(Sonoko::VERSION).not_to be nil
   end
 
-  it 'does something useful' do
+  it 'has tests' do
     expect(false).to eq(true)
   end
 end
