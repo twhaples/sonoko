@@ -19,23 +19,26 @@ module Sonoko
       return if File.exist?(@path)
       create_handle = SQLite3::Database.new(@path)
       create_handle.execute <<-SQL
-          create table tests (
-            classname varchar,
-            method varchar,
-            location varchar
-          );
-        SQL
+        create table tests (
+          classname varchar,
+          method varchar,
+          location varchar
+        );
+      SQL
+
       create_handle.execute <<-SQL
           create index test_lookup on tests (classname, method);
-          create unique_index no_dupes on tests (classname, method, location);
-        SQL
+      SQL
+      create_handle.execute <<-SQL
+          create unique index no_dupes on tests (classname, method, location);
+      SQL
     end
 
     def insert(classname, method, location)
-      handle.execute(
-        'insert into tests (classname, method, location) values (?, ?, ?);',
-        [classname.to_s, method.to_s, location]
-      )
+      handle.execute(<<-SQL, [classname.to_s, method.to_s, location])
+        insert or replace into tests (classname, method, location)
+         values (?, ?, ?);
+      SQL
     rescue => e
       # this typically happens in rspec-land so it's obnoxiously silent
       STDERR.puts e.inspect

@@ -5,7 +5,21 @@ require 'sqlite3'
 module Sonoko
   class Tracer
     class Base
-      def initialize
+      def self.build(
+            ignored_classes: ['RSpec', 'Sonoko'],
+            repo_root: Config.repo_root
+          )
+
+        ignored = ignored_classes.map do |c|
+          "\Q#{c}\E(?:::|$)"
+        end.join('|')
+        ignore_regex = /^(?:#{ignored}|#<)/
+
+        new(ignore_regex: ignore_regex, repo_root: repo_root)
+      end
+      def initialize(repo_root:, ignore_regex:)
+        @repo_root = repo_root
+        @ignore_regex = ignore_regex
         reset
       end
 
@@ -14,14 +28,14 @@ module Sonoko
       end
 
       def install
-        repo_root = Config.repo_root
+        repo_root = @repo_root
         base_regex = /^#{repo_root}/
-        ignore_regex = /^(?:RSpec::|#<)/
+        ignore_regex = @ignore_regex
 
         trace = proc do |event, file, _line, id, _binding, classname|
           if event == 'call' &&
-             file =~ base_regex &&
-             classname.to_s !~ ignore_regex
+             classname.to_s !~ ignore_regex &&
+             file =~ base_regex
             current_events << [classname, id]
           end
         end

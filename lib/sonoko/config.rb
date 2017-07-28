@@ -10,7 +10,7 @@ module Sonoko
       def setup(repo_root:, db_path:, verbose: true)
         require 'sonoko/db'
         @db = Sonoko::DB.new(db_path)
-        @tracer = Sonoko::Tracer::Sqlite.new
+        @tracer = Sonoko::Tracer::Sqlite.build
         @verbose = verbose
         @repo_root = Pathname.new(repo_root).realpath.to_s
       end

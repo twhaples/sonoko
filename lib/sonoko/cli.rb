@@ -38,6 +38,7 @@ module Sonoko
 
     desc 'reset', 'Reset the database'
     def reset
+      setup_db!
       Sonoko::Config.db.destroy!
     end
 
@@ -60,6 +61,8 @@ module Sonoko
     def relevant
       require 'sonoko'
       require 'sonoko/relevant'
+
+      setup_db!
       changed = []
       STDIN.each_line do |line|
         match = line.match(/^(\S+)(?:\s+|#|\.)(\S+)$/)
