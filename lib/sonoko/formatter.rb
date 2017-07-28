@@ -25,11 +25,13 @@ module Sonoko
       tracer.record(location)
     end
 
-    RSpec::Core::Formatters.register(
-      self,
-      :example_started,
-      :example_passed,
-      :example_failed,
-    )
+    def self.register
+      RSpec::Core::Formatters.register(
+        self,
+        :example_started,
+        :example_passed,
+        :example_failed,
+      )
+    end
   end
 end

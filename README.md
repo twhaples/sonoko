@@ -22,8 +22,9 @@ bundle binstub sonoko
 bin/sonoko-trace spec/ # or equivalent rspec arugments
 ```
 
+This creates `tests.db` in your project root.
 
-This will output a JSON mapping: class and method name to
+`bin/sonoko-dump` will dump the contents of the database, because you
+like debugging.
 
-At some point it will output SQLite instead. Or maybe a real database.
-It'll be fun!
+A future command will take method names and invoke those examples with rspec.

@@ -14,11 +14,9 @@ require 'rspec/core/runner'
 require 'json'
 require 'sonoko'
 
-Sonoko::Config.repo_root = Pathname.new(
-  File.join(File.dirname($PROGRAM_NAME), '..')
-).realpath
+Sonoko::Formatter.register
+Sonoko::Config.tracer.new_db!
 
 args = ['-f', 'Sonoko::Formatter', *ARGV]
-RSpec::Core::Runner.run(args)
 
-puts JSON.pretty_generate(Sonoko::Config.tracer.event_examples)
+RSpec::Core::Runner.run(args)
