@@ -37,19 +37,30 @@ module Sonoko
         repo_root = @repo_root
         base_regex = /^#{repo_root}/
         ignore_regex = @ignore_regex
-
-        trace = proc do |event, file, _line, id, _binding, classname|
-          if event == 'call' &&
-             classname.to_s !~ ignore_regex &&
-             file =~ base_regex
-            current_events << [classname, id]
-            if @keepalive
-              @count += 1
-              puts '.' if (@count % @keepalive == 0)
-            end
-          end
-        end
-
+        trace = if @keepalive
+                  count = 0
+                  keepalive = @keepalive
+                  proc do |event, file, _line, id, _binding, classname|
+                    if event == 'call' &&
+                       classname.to_s !~ ignore_regex &&
+                       file.match?(base_regex)
+                      current_events << [classname, id]
+                      count += 1
+                      if count == keepalive
+                        count = 0
+                        puts '.'
+                      end
+                    end
+                  end
+                else
+                  proc do |event, file, _line, id, _binding, classname|
+                    if event == 'call' &&
+                       classname.to_s !~ ignore_regex &&
+                       file =~ base_regex
+                      current_events << [classname, id]
+                    end
+                  end
+                end
         set_trace_func(trace)
       end
 
