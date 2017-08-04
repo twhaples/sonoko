@@ -110,14 +110,22 @@ database may be implemented in a future release.
 
 ## Mascot
 
-Sonoko is noted for her tendency to fall asleep in class and her
-ability to maintain a calm demeanor in the face of apocalyptic
-danger. She has learned to enjoy Kagawa Life and to treasure her time
-with her friends, because she knows that it is delicate and ephemeral,
-and that all things must pass.
+Sonoko is noted for her tendency to fall asleep in class, her family's
+substantial
+[financial resources](https://media.giphy.com/media/3o7bu2AF6XF1S66BpK/giphy.gif),
+and her ability to maintain a calm demeanor in the face of apocalyptic
+danger as she fights a hopeless rear-guard action to protect an
+all-but-defeated remnant of humanity from utter annihilation at the
+hands of ruthless, indefatigable monsters.
+
+She has learned to
+[enjoy Kagawa Life](https://www.youtube.com/results?search_query=let%27s+enjoy+kagawa+life)
+and to treasure her time with her friends, because she knows that all
+things must pass. Her spirit animal is the
+[chicken. 🐔](https://media.giphy.com/media/qRbvXeEieHiLe/giphy.gif)
 
 ![amusing .gif](https://media.giphy.com/media/jyAaxYquCLYe4/giphy.gif)
 
-She was chosen as mascot for the assonant sound of the name and the
-availability of cool shades ~~(and because
+Sonoko was chosen as mascot for the assonant sound of the name and the
+availability of cool shades ~~(and also because
 [Homu](https://github.com/homu) was already taken).~~
