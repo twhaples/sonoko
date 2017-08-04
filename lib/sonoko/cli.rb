@@ -33,7 +33,15 @@ module Sonoko
       Sonoko::Formatter.register
       setup_db!
 
-      argv_args = ['spec/'] if argv_args.empty?
+      if argv_args.empty?
+        argv_args = ['spec/']
+      elsif argv_args.length == 1 && argv_args.first == '-'
+        argv_args = []
+        STDIN.each_line do |line|
+          argv_args << line.chomp
+        end
+      end
+
       default_args = ['-f', 'Sonoko::Formatter']
       args = [*default_args, *argv_args]
 
