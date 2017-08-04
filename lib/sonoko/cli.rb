@@ -27,12 +27,11 @@ module Sonoko
 
     def analyze(*argv_args)
       require 'bundler/setup'
-      require 'rspec'
-      require 'rspec/core/runner'
       require 'sonoko'
 
-      setup_db!
+      require_rspec!
       Sonoko::Formatter.register
+      setup_db!
 
       argv_args = ['spec/'] if argv_args.empty?
       default_args = ['-f', 'Sonoko::Formatter']
@@ -47,34 +46,14 @@ module Sonoko
       Sonoko::Config.db.destroy!
     end
 
-    desc 'dump', 'Ugly dump of all the rows'
-    def dump
-      require 'sonoko'
-      require 'json'
+    desc 'dump_relevant',
+         'Identifies the tests relevant to a list of methods on STDIN'
+    def dump_relevant
+      require_relevant!
 
-      setup_db!
-
-      Sonoko::Config.db.handle.query('select * from tests') do |rows|
-        rows.each do |row|
-          puts JSON[row]
-        end
-      end
-    end
-
-    desc 'relevant',
-         'Identifies the tests relevant to a list of classes / methods'
-    def relevant
-      require 'sonoko'
-      require 'sonoko/relevant'
-
-      setup_db!
       changed = []
       STDIN.each_line do |line|
-        match = line.match(/^(\S+)(?:\s+|#|\.)(\S+)$/)
-        raise ArgumentError, "Could not understand #{line}" unless match
-        classname = match[1]
-        method = match[2]
-        changed << [classname, method]
+        changed << parse_method(line)
       end
 
       Sonoko::Relevant.compute(changed).each do |location|
@@ -82,7 +61,42 @@ module Sonoko
       end
     end
 
+    desc 'relevant [method]', 'Run tests relevant to [method]'
+    method_option :"dry-run",
+                  type: :boolean,
+                  desc: 'Prints test names instead of running'
+    def relevant(*methods)
+      require_relevant!
+      require_rspec!
+
+      parsed_methods = methods.map { |m| parse_method(m) }
+
+      invoke_rspec(
+        tests: Sonoko::Relevant.compute(parsed_methods).to_a
+      )
+    end
+
     no_tasks do
+      def parse_method(method)
+        match = method.match(/^(\S+)(?:\s+|#|\.)(\S+)$/)
+        raise ArgumentError, "Could not understand #{line}" unless match
+        classname = match[1]
+        method = match[2]
+        [classname, method]
+      end
+
+      def require_relevant!
+        require 'sonoko'
+        require 'sonoko/relevant'
+        setup_db!
+      end
+
+      def require_rspec!
+        require 'bundler/setup'
+        require 'rspec'
+        require 'rspec/core/runner'
+      end
+
       def setup_db!
         Sonoko::Config.setup(
           db_path: options[:db_path],
@@ -91,6 +105,14 @@ module Sonoko
           keepalive: options[:keepalive]
         )
         Sonoko::Config.db.ensure_created!
+      end
+
+      def invoke_rspec(tests:)
+        if options[:"dry-run"]
+          puts tests
+        else
+          RSpec::Core::Runner.run(tests)
+        end
       end
     end
   end

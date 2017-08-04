@@ -2,7 +2,6 @@
 
 Runs all the tests related to your diff.
 
-
 ![Let's Enjoy Kagawa Life!](http://i.imgur.com/MR3hYYK.jpg)
 
 ## Architecture
@@ -45,18 +44,19 @@ add records incrementally.
 
 ## Use
 
-`bin/sonoko relevant` will read a list of method names on `STDIN` and
-output relevant spec locations.
+Run the tests relevant to `FooBar.method` and `Bar::Foo#method`:
+``` shellsession
+bin/sonoko relevant FooBar.method "Bar::Foo#method"
+```
 
-A future command will determine relevant method names by
+A future command automatically will determine relevant method names by
  - looking at the git repository before and after
  - parsing the AST
  - looking for changes in the AST
  - walking down the diff to find methods removed by the change
  - walking back up the AST to find affected methods around this change
 
-A future command will take method names and invoke the relevant
-examples with rspec. It will also run any *modified* tests.
+It will also run modified tests.
 
 ## Performance
 
@@ -70,24 +70,32 @@ user	0m54.725s
 sys     0m5.719s
 ```
 
-
 ```
-inubozaki-fuu:payments-service$ time bin/sonoko analyze --vebose 'spec/models/registration_spec.rb'
+inubozaki-fuu:payments-service$ time bin/sonoko analyze 'spec/models/registration_spec.rb'
 
 real	8m16.908s
 user	6m50.064s
 sys     0m41.314s
 ```
 
-It takes about 6 times longer; you're probably going to want to run
-that overnight. You can run this on CircleCI and get parallelism; run
-it in verbose mode (to reassure Circle) and possibly bump up the idle
-timeout.
+It takes about 6-7 times longer, which is pretty typical. For large
+projects, this should generally be run overnight while your
+integration cluster would otherwise be idle. For very large projects,
+this should further be parallelized.
+
+## CircleCI
+
+You can run this on CircleCI and get parallelism; add the method
+option `--keepalive=100000` (to reassure Circle that the command is
+still running) and review timeouts if necessary. Actually causing this
+test run to happen is left as an exercise to the user; a small bot
+capable of submitting a new branch every evening may be provided in
+the future.
 
 ```
 test:
   override:
-    - bin/sonoko analyze --verbose:
+    - bin/sonoko analyze --keepalive=100000:
         parallel: true
         files:
           - spec/**/*_spec.rb
@@ -95,7 +103,21 @@ general:
   artifacts:
     - tests.db
 ```
-Merging databases will be required.
 
-## Amusement
-![amusing .gif](https://media.giphy.com/media/3ohryhYAObzCVnZQAg/giphy.gif)
+Running in parallel will mean that merging databases will be required.
+A command to fetch a database via HTTP and merge it into the local
+database may be implemented in a future release.
+
+## Mascot
+
+Sonoko is noted for her tendency to fall asleep in class and her
+ability to maintain a calm demeanor in the face of apocalyptic
+danger. She has learned to enjoy Kagawa Life and to treasure her time
+with her friends, because she knows that it is delicate and ephemeral,
+and that all things must pass.
+
+![amusing .gif](https://media.giphy.com/media/jyAaxYquCLYe4/giphy.gif)
+
+She was chosen as mascot for the assonant sound of the name and the
+availability of cool shades ~~(and because
+[Homu](https://github.com/homu) was already taken).~~
