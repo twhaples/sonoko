@@ -19,7 +19,12 @@ module Sonoko
                  desc: 'Print more messages'
 
     desc 'analyze [rspec-options]', 'Analyzes tests and builds a database'
-    option :examples, type: :string, default: 'spec/'
+    option :keepalive,
+           type: :numeric,
+           desc: 'Print a . every [keepalive] calls, to prevent timeouts '\
+                 'in environments like CircleCI. '\
+                 '(Recommended value if used: 100000)'
+
     def analyze(*argv_args)
       require 'bundler/setup'
       require 'rspec'
@@ -82,7 +87,8 @@ module Sonoko
         Sonoko::Config.setup(
           db_path: options[:db_path],
           repo_root: options[:repo],
-          verbose: options[:verbose]
+          verbose: options[:verbose],
+          keepalive: options[:keepalive]
         )
         Sonoko::Config.db.ensure_created!
       end

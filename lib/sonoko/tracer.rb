@@ -6,20 +6,26 @@ module Sonoko
   class Tracer
     class Base
       def self.build(
-            ignored_classes: ['RSpec', 'Sonoko'],
-            repo_root: Config.repo_root
-          )
+            ignored_classes: %w[RSpec Sonoko],
+            repo_root: Config.repo_root,
+            keepalive: false
+      )
 
         ignored = ignored_classes.map do |c|
           "\Q#{c}\E(?:::|$)"
         end.join('|')
         ignore_regex = /^(?:#{ignored}|#<)/
 
-        new(ignore_regex: ignore_regex, repo_root: repo_root)
+        new(ignore_regex: ignore_regex,
+            repo_root: repo_root,
+            keepalive: keepalive)
       end
-      def initialize(repo_root:, ignore_regex:)
+
+      def initialize(repo_root:, ignore_regex:, keepalive:)
         @repo_root = repo_root
         @ignore_regex = ignore_regex
+        @keepalive = keepalive
+        @count = 0
         reset
       end
 
@@ -37,6 +43,10 @@ module Sonoko
              classname.to_s !~ ignore_regex &&
              file =~ base_regex
             current_events << [classname, id]
+            if @keepalive
+              @count += 1
+              puts '.' if (@count % @keepalive == 0)
+            end
           end
         end
 
