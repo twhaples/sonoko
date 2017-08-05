@@ -45,6 +45,7 @@ module Sonoko
       default_args = ['-f', 'Sonoko::Formatter']
       args = [*default_args, *argv_args]
 
+      puts args.join(' ') if options[:verbose]
       RSpec::Core::Runner.run(args)
     end
 
